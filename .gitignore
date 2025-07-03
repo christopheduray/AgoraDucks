@@ -1,0 +1,5 @@
+.env
+vendor
+trash
+composer.lock
+Todo.txt
