@@ -1,5 +1,6 @@
 rsync -av \
 	--exclude .env \
+	--exclude .git \
 	--exclude composer.lock \
 	--exclude vendor \
 		. \

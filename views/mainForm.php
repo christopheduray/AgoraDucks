@@ -20,6 +20,9 @@
     <button class='cta' id="cPlus">+</button><button class='cta' id="cMinus">-</button>
     canard(s)
     </td></tr>
+    <tr><td></td><td><input type=checkbox id=ck_age name='ck_age'>
+            <label for='ck_age'>Je reconnais être agé de 18 ans ou plus pour participer à ce concours et avoir lu le 
+            règlement du concours.</label></td></tr>
 </table>
 
 <div class=card>
@@ -206,6 +209,9 @@ $('#goToPay').click(()=>{
 
     if(!validateMail(payload.email)) errors.push("Le champ e-mail n'est pas correctement rempli")
     if(!validatePhone(payload.gsm)) errors.push("Le champ Téléphone n'est pas correctement rempli")
+
+    if(!$('#ck_age').prop('checked')) errors.push("Vous devez avoir 18 ans ou plus pour participer")
+
 
     if(errors.length>0){
         alert(errors.join("\n"))
