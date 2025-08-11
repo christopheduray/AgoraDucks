@@ -35,6 +35,12 @@
 <div id="canards"></div>
 
 <button id="goToPay" class='cta cta-primary'><span id=price></span> € ? C'est parti!</button>
+
+<?php
+    if($_SESSION['ADMIN']??false){
+        echo "<button id='directSell' class='cta cta-secondary'>Vente directe</button>\n";
+    }
+?>
 </div>
 <div class='by2'>
 <div id=smilingDuck>
@@ -96,7 +102,7 @@ $('#cMinus').click(()=>{
 function aj(payload, callback){
     $.ajax({
         method: 'POST',
-        url: 'api.php',
+        url: '/ducks/api/',
         dataType: 'json',
         data: payload,
         success: callback
@@ -190,9 +196,17 @@ $('#gsm').change(function(){
     else t.addClass('error')
 })
 
+$('#directSell').click(()=>{
+    sendForm('directSell')
+})
+
 $('#goToPay').click(()=>{
+    sendForm('order')
+})
+
+function sendForm(action){
     payload={
-        action: 'order',
+        action: action,
         nb: nbCanards,
         ducks: [],
         gsm: $('#gsm').val(),
@@ -205,7 +219,7 @@ $('#goToPay').click(()=>{
     })
 
     let errors=[]
-    payload.ducks.map((d)=>{ if(d<1 || d>MAXDUCKS) errors=['Merci de remplir les numéros de canard correctement'] })
+    payload.ducks.map((d)=>{ if(d<1 || d>MAXDUCKS) errors.push('Merci de remplir les numéros de canard correctement') })
 
     if(!validateMail(payload.email)) errors.push("Le champ e-mail n'est pas correctement rempli")
     if(!validatePhone(payload.gsm)) errors.push("Le champ Téléphone n'est pas correctement rempli")
@@ -228,7 +242,6 @@ $('#goToPay').click(()=>{
             })
             alert("Merci de remplir tous les champs correctement avant de procéder au paiement")
         }
-    })   
-    
-})
+    })      
+}
 </script>

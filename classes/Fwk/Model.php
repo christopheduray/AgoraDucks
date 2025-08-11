@@ -1,4 +1,6 @@
 <?php
+namespace Fwk;
+
 /* l'ORM du pauvre... */
 abstract class Model {
     protected static $baseTable;
@@ -46,7 +48,7 @@ abstract class Model {
         $q=DB::get()->prepare("select * from ".static::$baseTable." where id=:id");
         $q->bindValue('id',$id);
         $q->execute();
-        if($r=$q->fetch(PDO::FETCH_ASSOC)){
+        if($r=$q->fetch(\PDO::FETCH_ASSOC)){
             foreach($r as $k=>$v) $o->{$k}=$v;
         }
         return $o;

@@ -1,4 +1,6 @@
 <?php
+use Fwk\Model;
+use Fwk\DB;
 use chillerlan\QRCode\{QRCode, QROptions};
 
 class Duck extends Model {
@@ -18,6 +20,17 @@ class Duck extends Model {
     public function __construct(){
         $tk=new Token();
         $this->token=$tk->get();
+    }
+
+    // libérer le canard
+    public static function free(){
+        $this->statut=0;
+        $this->id_txn=null;
+        $this->email=null;
+        $this->gsm=null;
+        $this->surnom=null;
+        $this->token='';
+        $this->save();
     }
 
     public static function randomDuckIds(int $number){
@@ -61,15 +74,14 @@ class Duck extends Model {
         ob_start();
         $id=$this->id;
         $token=$this->token;
+        QRGen::gen($id,$token);
         $gsm=$this->gsm;
         $email=$this->email;
+        $logo=$_ENV['PUBLIC_URL']."images/logo_demicercle.png";
+        $qrCode=$_ENV['PUBLIC_URL']."storage/".QRGen::getFilename($id,$token);
 
-        $qrCode=(new QRCode)->render($_ENV['PUBLIC_URL']."validate.php?id=$id&token=$token");
-
-        include __DIR__.'/../views/duckSub.php';
-
+        include __DIR__.'/../views/duckMail.php';
         return ob_get_clean();
-
     }
 
 }

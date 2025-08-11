@@ -1,4 +1,6 @@
 <?php
+use Fwk\Model;
+
 class Txn extends Model {
     protected static $baseTable='txn';
     protected $attrs=[
@@ -42,7 +44,30 @@ class Txn extends Model {
                 $D->email=$this->email;
                 $D->save();
             }
+            $this->sendDucks();
         }
+    }
+
+    public function processAsCancelled(){
+        if($this->statut==0){
+            $this->statut=2;
+            $this->save();
+            $ducks=Duck::fromTxn($this->id);
+            foreach($ducks as $D) $D->free();
+        }
+    }
+
+    public function sendDucks(){
+        $ducks=Duck::fromTxn($this->id);
+        ob_start();
+        $nb_ducks=count($ducks);
+        include __DIR__.'/../views/mailIntro.php';
+        $msg=ob_get_clean();
+        
+        foreach($ducks as $D){
+            $msg.=$D->renderHTML();
+        }
+        Mailer::send($this->email,count($ducks)>1?"Voici les certificats de tes canards":"Voici le certificat de ton canard",$msg);
     }
     
 }

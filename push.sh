@@ -3,5 +3,6 @@ rsync -av \
 	--exclude .git \
 	--exclude composer.lock \
 	--exclude vendor \
+	--exclude storage \
 		. \
 		root@mx.cdy.be:/var/www/clients/ducks/

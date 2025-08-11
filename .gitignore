@@ -1,5 +1,6 @@
 .env
 vendor
+storage
 trash
 composer.lock
 Todo.txt

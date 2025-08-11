@@ -1,5 +1,10 @@
 <?php
+use Fwk\Router;
+session_start();
+
 require 'autoload.php';
+require 'app/routes.php';
+
 DotEnv::load();
 
-View::render('mainForm');
+Router::dispatch();

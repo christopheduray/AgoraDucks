@@ -23,6 +23,8 @@ switch($statut){
 
             break;
     case '2':
-            echo "<div class=error>La transaction a échoué\n</div>";
+            echo "<div class=error>La transaction a été annulée\n</div>";
             break;
 }
+?>
+<a class='cta' href='<?=$BASE?>'>Retour à l'interface de commande</a>
