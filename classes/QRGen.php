@@ -15,11 +15,13 @@ class QRGen {
         $options->quality             = 90;
         // the size of one qr module in pixels
         $options->scale               = 20;
-        $options->bgColor             = [200, 150, 200];
-        $options->imageTransparent    = true;
+        $options->bgColor             = [255, 255, 255];
+        $options->imageTransparent    = false;
+        /*
         // the color that will be set transparent
         // @see https://www.php.net/manual/en/function.imagecolortransparent
-        $options->transparencyColor   = [200, 150, 200];
+        $options->transparencyColor   = [255, 255, 255];
+        */
         $options->drawCircularModules = true;
         $options->drawLightModules    = true;
         $options->circleRadius        = 0.4;
@@ -57,5 +59,13 @@ class QRGen {
         fclose($fh);
     }
 
+    public static function genShort($id,$token){
+        $options=static::getOptions();
+        $qrCode=(new QRCode($options))->render($_ENV['PUBLIC_SHORTURL']."$id/$token");
+
+        $fh=fopen(__DIR__.'/../storage/'.static::getFilename($id,$token),"w");
+        fwrite($fh,$qrCode);
+        fclose($fh);
+    }
 
 }

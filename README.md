@@ -39,9 +39,10 @@ At the time of writing this readme, I only have:
 
 Configuration has to occur in
 * .env: fill in your payconiq api key, specify wether you're in production or not, talk about your DB
-* classes/Config.php: price, event date and so on
+* classes/Config.php: price, number of ducks, event date and so on
 * don't forget to run your composer-update
 * the "storage" folder has to be writable by your server
+* run job/initial_load.php once after creating the tables
 * run the job/reap.php periodically
 
 

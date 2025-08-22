@@ -13,7 +13,16 @@ class AdminPagesCtrl {
 
     public static function menu(){
         static::mustBeAdmin();
-        View::render('adminMenu');
+        $q=DB::get()->prepare("select statut, count(*) cnt from duck group by statut order by 1");
+        $q->execute();
+
+        $STATS=[];
+        $STATLUP=['Libre','En attente','Réservé'];
+        while($r=$q->fetch(PDO::FETCH_ASSOC)){
+            $STATS[]=['statut'=>$STATLUP[$r['statut']], 'cnt'=>$r['cnt']];
+        }
+
+        View::render('adminMenu',['STATS'=>$STATS]);
     }
 
     public static function txn(){

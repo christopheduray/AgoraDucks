@@ -3,6 +3,7 @@
         "guzzlehttp/guzzle": "^7.9",
         "composer/ca-bundle": "^1.5",
         "chillerlan/php-qrcode": "^5.0",
-        "phpmailer/phpmailer": "^6.10"
+        "phpmailer/phpmailer": "^6.10",
+        "dompdf/dompdf": "^3.1"
     }
 }
