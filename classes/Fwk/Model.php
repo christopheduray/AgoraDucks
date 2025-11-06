@@ -50,8 +50,9 @@ abstract class Model {
         $q->execute();
         if($r=$q->fetch(\PDO::FETCH_ASSOC)){
             foreach($r as $k=>$v) $o->{$k}=$v;
+            return $o;
         }
-        return $o;
+        return null;
     }
 
 }

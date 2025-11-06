@@ -9,7 +9,7 @@ ini_set('memory_limit', '512M');
 DotEnv::load();
 
 $files=[];
-$q=DB::get()->prepare("select * from duck order by id limit 100");
+$q=DB::get()->prepare("select * from duck order by id");
 $q->execute();
 while($r=$q->fetch(PDO::FETCH_ASSOC)){
     QRGen::genShort($r['id'],$r['token']);

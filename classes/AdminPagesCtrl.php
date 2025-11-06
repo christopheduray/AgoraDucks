@@ -61,13 +61,22 @@ class AdminPagesCtrl {
         echo "</pre>";
     }
 
+    public static function ranking(){
+        static::mustBeAdmin();
+        $q=Fwk\DB::get()->prepare("select s.id, s.id_duck, d.email, d.gsm from scan s join duck d on s.id_duck=d.id order by id");
+        $q->execute();
+        $SCANS=$q->fetchAll(PDO::FETCH_OBJ);
+        View::render("duckScan",[ 'DUCK'=>null, 'SCANS'=>$SCANS, 'err'=>[] ]);
+    }
+
     public static function genRoutes(){
         Router::add('POST','/admin/ajax',[static::class,'ajax']);
         Router::add('GET','/admin/txn',[static::class,'txn']);
         Router::add('GET','/admin/ducks',[static::class,'ducks']);
         Router::add('GET','/admin/dump',[static::class,'dump']);
+        Router::add('GET','/admin/ranking',[static::class,'ranking']);
+        
         Router::add('GET','/admin',[static::class,'menu']);
-
     }
 
 }

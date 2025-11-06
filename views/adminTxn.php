@@ -34,7 +34,7 @@
             <td>$payload[action]</td>
             <td align=right>$payload[nb]</td>
             <td>$payLog</td>
-            <td>".($T['statut']==1?"<a class='btn btn-secondary'
+            <td>".(in_array($T['statut'],[0,1])?"<a class='btn btn-secondary'
                                         href='".$BASE."pay_check/?id_pay=$T[id]&token=$T[token]'>Visualiser</a>":"").
             "</td>
             <td>".($T['statut']==1?"<button class='btn btn-warning sendMail'

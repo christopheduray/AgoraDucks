@@ -4,14 +4,17 @@ use Fwk\Router;
 class PublicPagesCtrl {
 
     public static function mainPage(){
-        View::render('mainForm');
+        if($_ENV['SOLDOUT']??false)
+            View::render('soldOut');
+        else
+            View::render('mainForm');
     }
 
     public static function duckValidator(){
         $id=$_GET['id']??0;
-        $token=$_GET['token']??0;
+        $token=$_GET['token']??'';
 
-        if($id && $token){
+        if($id){
             $D=Duck::load($id);
             if($D->token==$token){
                 View::render("duckValidation",[ 'duck'=>$D ]);
@@ -25,7 +28,7 @@ class PublicPagesCtrl {
         $payload = json_decode(file_get_contents("php://input"));
 
         $fh=fopen(__DIR__.'/../storage/'.date('YmdHis').'log','w');
-        fwrite($fh,$payload);
+        fwrite($fh,json_encode($payload));
         fclose($fh);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
@@ -33,10 +36,13 @@ class PublicPagesCtrl {
             die();
         }
 
-        $T=Txn::load($payload->paymentId);
+        $T=Txn::byPaymentId($payload->paymentId);
 
         if($T){
-            $T->processAsPaid(); // effectue également l'envoi mail
+            $T->payment_trace=json_encode($payload);
+            $T->save();
+            if($payload->status=='SUCCEEDED')
+                $T->processAsPaid(); // effectue également l'envoi mail
         }
     }
 
@@ -75,11 +81,47 @@ class PublicPagesCtrl {
         }
     }
 
+    public static function scan(){
+        $id=$_GET['id']??0;
+        $token=$_GET['token']??'';
+
+        if($id){
+            $D=Duck::load($id);
+
+            
+            $err="";
+            if($D->token==$token){
+                $q=Fwk\DB::get()->prepare("select * from scan where id_duck=:id");
+                $q->bindValue('id',$id);
+                $q->execute();
+                if($r=$q->fetch(PDO::FETCH_ASSOC)) $err="Ce canard a déjà été scanné (position: $r[id])";
+                else {
+                    $S=new Scan();
+                    $S->hydrate([
+                        'id_duck'=>$D->id
+                    ]);
+                    $S->save();    
+                }
+            }
+
+            $q=Fwk\DB::get()->prepare("select s.id, s.id_duck, d.email, d.gsm from scan s join duck d on s.id_duck=d.id order by id");
+            $q->execute();
+            $SCANS=$q->fetchAll(PDO::FETCH_OBJ);
+            View::render("duckScan",[ 'DUCK'=>$D, 'SCANS'=>$SCANS, 'err'=>$err ]);
+        } else {
+            echo "Cette page n'est pas supposée être appelée en direct";
+        }
+
+    }
+
     public static function genRoutes(){
-        Router::add('GET','/pc_callback',[static::class,'pc_callback']); // retour de PayConiq
+        Router::add('POST','/pc_callback',[static::class,'pc_callback']); // retour de PayConiq
         Router::add('GET','/pay_check',[static::class,'pay_check']);
         Router::add('GET','/validate',[static::class,'duckValidator']);  // vérification QR
+        Router::add('GET','/scan',[static::class,'scan']);  // ligne d'arrivée
         Router::add('GET','',[static::class,'mainPage']);
+
+        
     }
 
 }

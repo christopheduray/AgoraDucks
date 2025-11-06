@@ -5,4 +5,4 @@ rsync -av \
 	--exclude vendor \
 	--exclude storage \
 		. \
-		root@mx.cdy.be:/var/www/clients/ducks/
+		www-data@mx.cdy.be:/var/www/clients/ducks/

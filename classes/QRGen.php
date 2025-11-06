@@ -50,6 +50,10 @@ class QRGen {
         return $id.'_'.$token.'.png';
     }
 
+    public static function getShortFilename($id,$token){
+        return 's_'.$id.'_'.$token.'.png';
+    }
+
     public static function gen($id,$token){
         $options=static::getOptions();
         $qrCode=(new QRCode($options))->render($_ENV['PUBLIC_URL']."validate.php?id=$id&token=$token");
@@ -63,7 +67,16 @@ class QRGen {
         $options=static::getOptions();
         $qrCode=(new QRCode($options))->render($_ENV['PUBLIC_SHORTURL']."$id/$token");
 
-        $fh=fopen(__DIR__.'/../storage/'.static::getFilename($id,$token),"w");
+        $fh=fopen(__DIR__.'/../storage/'.static::getShortFilename($id,$token),"w");
+        fwrite($fh,$qrCode);
+        fclose($fh);
+    }
+
+    public static function publicURL(){
+        $options=static::getOptions();
+        $qrCode=(new QRCode($options))->render(preg_replace("|/[^/]+/$|","",$_ENV['PUBLIC_URL']));
+
+        $fh=fopen(__DIR__.'/../storage/atc.png',"w");
         fwrite($fh,$qrCode);
         fclose($fh);
     }

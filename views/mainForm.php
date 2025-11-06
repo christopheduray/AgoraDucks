@@ -174,7 +174,7 @@ function retireCanard(){
 }
 
 function validateMail(str){
-    if(str.length > 10 && str.match(/[a-z0-9\-\._]+@[a-z0-9\.]+\.[a-z0-9]+/i))
+    if(str.length > 10 && str.match(/[a-z0-9\-\._]+@[a-z0-9\.\-_]+\.[a-z0-9]+/i))
         return true
     else
         return false
@@ -240,7 +240,7 @@ function sendForm(action){
                 const t=$(this)
                 if(t.val()>'') t.trigger('change')
             })
-            alert("Merci de remplir tous les champs correctement avant de procéder au paiement")
+            alert("Une erreur est survenue")
         }
     })      
 }

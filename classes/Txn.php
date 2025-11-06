@@ -57,6 +57,18 @@ class Txn extends Model {
         }
     }
 
+    public static function byPaymentId($pid){
+        $o=new static;
+        $q=DB::get()->prepare("select * from txn where payment_id=:pid");
+        $q->bindValue('pid',$pid);
+        $q->execute();
+        if($r=$q->fetch(\PDO::FETCH_ASSOC)){
+            foreach($r as $k=>$v) $o->{$k}=$v;
+            return $o;
+        }
+        return null;
+    }
+
     public function sendDucks(){
         $ducks=Duck::fromTxn($this->id);
         ob_start();

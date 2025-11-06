@@ -23,13 +23,13 @@ class Duck extends Model {
     }
 
     // libérer le canard
-    public static function free(){
+    public function free(){
         $this->statut=0;
         $this->id_txn=null;
         $this->email=null;
         $this->gsm=null;
         $this->surnom=null;
-        $this->token='';
+//        $this->token='';  // à voir si doit être resetté ou pas
         $this->save();
     }
 
