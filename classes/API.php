@@ -102,7 +102,12 @@ class API {
     }
 
     public static function getRanking(){
-        $q=Fwk\DB::get()->prepare("select * from scan order by id");
+        $q=Fwk\DB::get()->prepare("
+            select s.id, id_duck, s.ts,
+                    l.sponsor, l.valeur, l.cadeau
+                    from scan s 
+                join lots l on s.id=l.id
+            ");
         $q->execute();
         echo json_encode($q->fetchAll(PDO::FETCH_ASSOC),1);
     }

@@ -51,6 +51,36 @@ class AdminPagesCtrl {
                 if($T) $T->sendDucks();
                 echo "[]";
                 break;
+            case 'appendScan':
+                $id_duck=(int)$_POST['id_duck'];
+                if($id_duck>0){
+                    // vérifier que le canard n'est pas déjà enregistré
+                    $q=DB::get()->prepare("select * from scan where id_duck=:id_duck");
+                    $q->bindValue('id_duck',$id_duck);
+                    $q->execute();
+                    if($q->fetch(PDO::FETCH_ASSOC)) { echo "{\"err\":\"Le canard a déjà été scanné\"}"; return; }
+                    $q=DB::get()->prepare("insert into scan (id_duck) values (:id_duck)");
+                    $q->bindValue('id_duck',$id_duck);
+                    $q->execute();
+                }
+                echo "[]";
+                break;
+            case 'updScan':
+                $id=(int)$_POST['id'];
+                $id_duck=(int)$_POST['id_duck'];
+                if($id && $id_duck){
+                    $q=DB::get()->prepare("select * from scan where id_duck=:id_duck and id<>:id");
+                    $q->bindValue('id_duck',$id_duck);
+                    $q->bindValue('id',$id);
+                    $q->execute();
+                    if($q->fetch(PDO::FETCH_ASSOC)) { echo "{\"err\":\"Le canard a déjà été scanné\"}"; return; }
+                    $q=DB::get()->prepare("update scan set id_duck=:id_duck where id=:id");
+                    $q->bindValue('id_duck',$id_duck);
+                    $q->bindValue('id',$id);
+                    $q->execute();
+                }
+                echo "[$id,$id_duck]";
+                break;
         }
     }
 
@@ -63,7 +93,7 @@ class AdminPagesCtrl {
 
     public static function ranking(){
         static::mustBeAdmin();
-        $q=Fwk\DB::get()->prepare("select s.id, s.id_duck, d.email, d.gsm from scan s join duck d on s.id_duck=d.id order by id");
+        $q=Fwk\DB::get()->prepare("select s.id, s.id_duck, d.email, d.gsm from scan s left join duck d on s.id_duck=d.id order by id");
         $q->execute();
         $SCANS=$q->fetchAll(PDO::FETCH_OBJ);
         View::render("duckScan",[ 'DUCK'=>null, 'SCANS'=>$SCANS, 'err'=>[] ]);
